@@ -2,12 +2,14 @@ package com.project.parkIT.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.parkIT.domain.Member;
 import com.project.parkIT.domain.MemberDTO;
 import com.project.parkIT.repository.MemberRepository;
 
+@Service
 @Transactional
 public class MemberService {
 	private final MemberRepository memberRepository;

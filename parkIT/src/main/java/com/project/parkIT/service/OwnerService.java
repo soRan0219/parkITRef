@@ -2,12 +2,14 @@ package com.project.parkIT.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.parkIT.domain.Owner;
 import com.project.parkIT.domain.OwnerDTO;
 import com.project.parkIT.repository.OwnerRepository;
 
+@Service
 @Transactional
 public class OwnerService {
 	private final OwnerRepository ownerRepository;

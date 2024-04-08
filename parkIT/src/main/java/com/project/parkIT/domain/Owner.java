@@ -1,7 +1,18 @@
 package com.project.parkIT.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
@@ -31,6 +42,10 @@ public class Owner {
 		this.name = name;
 		this.tel = tel;
 	}
+	
+	@Builder.Default
+	@OneToMany(mappedBy="owner", cascade=CascadeType.ALL)
+	private List<ParkingLot> pList = new ArrayList<>();
 	
 	public void updateOwner(OwnerDTO dto) {
 		if(dto.getPw()!=null && !dto.getPw().equals("")) 
