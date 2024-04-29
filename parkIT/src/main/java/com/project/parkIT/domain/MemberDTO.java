@@ -10,6 +10,7 @@ import lombok.Setter;
 public class MemberDTO {
 	private String id;
 	private String pw;
+	private String pwConfirm;
 	private String name;
 	private String tel;
 	private Date birth;

@@ -40,7 +40,6 @@ public class ParkingLot {
 	protected ParkingLot(String code, Owner owner, String name, String addr, int total) {
 		this.code = code;
 		
-//		this.ownerId = ownerId;
 		if(this.owner != null) this.owner.getPList().remove(this);
 		this.owner = owner;
 		owner.getPList().add(this);

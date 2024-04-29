@@ -1,18 +1,9 @@
 package com.project.parkIT.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
@@ -21,26 +12,30 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Owner {
 	@Id
-	@Column(name="owner_id", length=15)
+	@Column(name="owner_id", length=15, nullable=false)
 	private String id;
 	
-	@Column(name="owner_pw", length=50)
+	@Column(name="owner_pw", length=2000, nullable=false)
 	private String pw;
 	
-	@Column(name="owner_name", length=20)
+	@Column(name="owner_name", length=20, nullable=false)
 	private String name;
 	
-	@Column(name="owner_tel", length=14)
+	@Column(name="owner_tel", length=14, nullable=false, unique=true)
 	private String tel;
 	
 	@Column(name="owner_email", length=50)
 	private String email;
 	
-	protected Owner(String id, String pw, String name, String tel) {
+	@Enumerated(EnumType.STRING)
+	private Role role;
+	
+	protected Owner(String id, String pw, String name, String tel, Role role) {
 		this.id = id;
 		this.pw = pw;
 		this.name = name;
 		this.tel = tel;
+		this.role = role;
 	}
 	
 	@Builder.Default
@@ -48,13 +43,13 @@ public class Owner {
 	private List<ParkingLot> pList = new ArrayList<>();
 	
 	public void updateOwner(OwnerDTO dto) {
-		if(dto.getPw()!=null && !dto.getPw().equals("")) 
+		if(dto.getPw()!=null && !dto.getPw().trim().isBlank()) 
 			this.pw = dto.getPw();
-		if(dto.getName()!=null && !dto.getName().equals("")) 
+		if(dto.getName()!=null && !dto.getName().trim().isBlank()) 
 			this.name = dto.getName();
-		if(dto.getTel()!=null && !dto.getTel().equals("")) 
+		if(dto.getTel()!=null && !dto.getTel().trim().isBlank()) 
 			this.tel = dto.getTel();
-		if(dto.getEmail()!=null && !dto.getEmail().equals("")) 
+		if(dto.getEmail()!=null && !dto.getEmail().trim().isBlank()) 
 			this.email = dto.getEmail();
 	}
 }

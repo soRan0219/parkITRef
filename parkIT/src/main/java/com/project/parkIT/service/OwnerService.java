@@ -2,21 +2,23 @@ package com.project.parkIT.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.parkIT.domain.Owner;
 import com.project.parkIT.domain.OwnerDTO;
+import com.project.parkIT.domain.Role;
 import com.project.parkIT.repository.OwnerRepository;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 @Transactional
 public class OwnerService {
 	private final OwnerRepository ownerRepository;
-	
-	public OwnerService(OwnerRepository ownerRepository) {
-		this.ownerRepository = ownerRepository;
-	}
+	private final PasswordEncoder encoder;
 	
 	//중복확인
 	private void validateDuplicateOwner(String id) {
@@ -29,12 +31,15 @@ public class OwnerService {
 	//회원가입
 	public String join(OwnerDTO dto) {
 		validateDuplicateOwner(dto.getId());
+		dto.setPw(encoder.encode(dto.getPw()));
+		
 		Owner owner = Owner.builder()
 				.id(dto.getId())
 				.pw(dto.getPw())
 				.name(dto.getName())
 				.tel(dto.getTel())
 				.email(dto.getEmail())
+				.role(Role.OWNER)
 				.build();
 		
 		ownerRepository.save(owner);
@@ -42,7 +47,16 @@ public class OwnerService {
 		return owner.getId();
 	}
 	
-	//아이디 조회 (로그인)
+	//로그인
+	public Owner login(String id, String pw) {
+		return ownerRepository.findById(id)
+				.filter(it -> encoder.matches(pw, it.getPw()))
+				.orElseThrow(() -> {
+					throw new IllegalStateException("일치하는 아이디 또는 비밀번호가 없습니다.");
+				});
+	}
+	
+	//아이디로 조회
 	public Owner findOne(String id) {
 		return ownerRepository.findById(id)
 				.orElseThrow(() -> {
@@ -81,6 +95,11 @@ public class OwnerService {
 				.orElseThrow(() -> {
 					throw new IllegalStateException("점주를 찾을 수 없습니다.");
 				});
+		
+		if(!encoder.matches(owner.getPw(), dto.getPw())) {
+			dto.setPw(encoder.encode(dto.getPw()));
+		}
+		
 		owner.updateOwner(dto);
 		
 		return owner;

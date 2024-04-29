@@ -2,21 +2,23 @@ package com.project.parkIT.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.parkIT.domain.Member;
 import com.project.parkIT.domain.MemberDTO;
+import com.project.parkIT.domain.Role;
 import com.project.parkIT.repository.MemberRepository;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 @Transactional
 public class MemberService {
 	private final MemberRepository memberRepository;
-	
-	public MemberService(MemberRepository memberRepository) {
-		this.memberRepository = memberRepository;
-	}
+	private final PasswordEncoder encoder;
 	
 	//중복확인
 	private void validateDuplicateMember(String memberId) {
@@ -29,6 +31,8 @@ public class MemberService {
 	//회원가입
 	public String join(MemberDTO memberDto) {
 		validateDuplicateMember(memberDto.getId());
+		memberDto.setPw(encoder.encode(memberDto.getPw()));
+		
 		Member member = Member.builder()
 				.id(memberDto.getId())
 				.pw(memberDto.getPw())
@@ -37,6 +41,7 @@ public class MemberService {
 				.birth(memberDto.getBirth())
 				.email(memberDto.getEmail())
 				.reg(memberDto.getReg())
+				.role(Role.MEMBER)
 				.build();
 		
 		memberRepository.save(member);
@@ -44,7 +49,16 @@ public class MemberService {
 		return member.getId();
 	}
 	
-	//아이디로 조회 (로그인)
+	//로그인
+	public Member login(String id, String pw) {
+		return memberRepository.findById(id)
+				.filter(mem -> encoder.matches(mem.getPw(), pw))
+				.orElseThrow(() -> {
+					throw new IllegalStateException("일치하는 아이디 또는 비밀번호가 없습니다.");
+				});
+	}
+	
+	//아이디로 조회
 	public Member findOne(String memberId) {
 		return memberRepository.findById(memberId).orElseThrow(() -> {
 			throw new IllegalStateException("아이디와 비밀번호를 확인해주세요.");
@@ -82,6 +96,10 @@ public class MemberService {
 				.orElseThrow(() -> {
 					throw new IllegalStateException("회원을 찾을 수 없습니다.");
 				});
+		
+		if(!encoder.matches(member.getPw(), updateMember.getPw())) {
+			updateMember.setPw(encoder.encode(updateMember.getPw()));
+		}
 		
 		member.changeMember(updateMember);
 		
