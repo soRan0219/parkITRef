@@ -2,6 +2,9 @@ package com.project.parkIT.domain;
 
 import java.util.*;
 
+import com.project.parkIT.domain.dto.OwnerDTO;
+import com.project.parkIT.domain.enums.Role;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +14,7 @@ import lombok.*;
 @Builder
 @Entity
 public class Owner {
+	
 	@Id
 	@Column(name="owner_id", length=15, nullable=false)
 	private String id;
@@ -29,6 +33,19 @@ public class Owner {
 	
 	@Enumerated(EnumType.STRING)
 	private Role role;
+	
+	//refreshToken : redis 적용 전
+	@Column(name="refresh_token", length=500)
+	private String refreshToken;
+	
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
+	
+	public void destroyRefreshToken() {
+		this.refreshToken = null;
+	}
+	//refreshToken : redis 적용 전
 	
 	protected Owner(String id, String pw, String name, String tel, Role role) {
 		this.id = id;

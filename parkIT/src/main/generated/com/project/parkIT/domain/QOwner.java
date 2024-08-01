@@ -30,6 +30,10 @@ public class QOwner extends EntityPathBase<Owner> {
 
     public final StringPath pw = createString("pw");
 
+    public final StringPath refreshToken = createString("refreshToken");
+
+    public final EnumPath<com.project.parkIT.domain.enums.Role> role = createEnum("role", com.project.parkIT.domain.enums.Role.class);
+
     public final StringPath tel = createString("tel");
 
     public QOwner(String variable) {

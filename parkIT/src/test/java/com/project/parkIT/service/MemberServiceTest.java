@@ -9,8 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.parkIT.domain.Member;
-import com.project.parkIT.domain.MemberDTO;
-import com.project.parkIT.repository.MemberRepository;
+import com.project.parkIT.domain.dto.MemberDTO;
+import com.project.parkIT.repository.member.MemberRepository;
+import com.project.parkIT.service.member.MemberService;
 
 import lombok.extern.slf4j.Slf4j;
 

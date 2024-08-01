@@ -11,8 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.parkIT.domain.ParkingLot;
-import com.project.parkIT.domain.ParkingLotDTO;
-import com.project.parkIT.repository.ParkingLotRepository;
+import com.project.parkIT.domain.dto.ParkingLotDTO;
+import com.project.parkIT.repository.parkingLot.ParkingLotRepository;
+import com.project.parkIT.service.parkingLot.ParkingLotService;
 
 import lombok.extern.slf4j.Slf4j;
 

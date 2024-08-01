@@ -1,5 +1,7 @@
 package com.project.parkIT.domain;
 
+import com.project.parkIT.domain.dto.ParkingLotDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

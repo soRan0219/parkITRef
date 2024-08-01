@@ -2,6 +2,9 @@ package com.project.parkIT.domain;
 
 import java.sql.Date;
 
+import com.project.parkIT.domain.dto.MemberDTO;
+import com.project.parkIT.domain.enums.Role;
+
 import jakarta.persistence.*;
 import lombok.*;
 

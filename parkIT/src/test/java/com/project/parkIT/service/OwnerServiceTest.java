@@ -9,8 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.parkIT.domain.Owner;
-import com.project.parkIT.domain.OwnerDTO;
-import com.project.parkIT.repository.OwnerRepository;
+import com.project.parkIT.domain.dto.OwnerDTO;
+import com.project.parkIT.repository.owner.OwnerRepository;
+import com.project.parkIT.service.owner.OwnerService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -92,9 +93,9 @@ public class OwnerServiceTest {
 		log.debug(" ** TEST : 점주수정");
 		//given
 		OwnerDTO dto = new OwnerDTO();
-		dto.setId("id3");
-		dto.setPw("3366");
-		dto.setEmail("three@삼.삼");
+		dto.setId("id6");
+		dto.setPw("6633");
+		dto.setEmail("three@육.육");
 		
 		//when
 		Owner owner = ownerService.update(dto);

@@ -1,0 +1,57 @@
+springdoc:
+  show-login-endpoint: 'true'
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
+  #paths-to-match: /api/**
+spring:
+  #thymeleaf:
+    #cache: 'false'
+    #prefix: classpath:/templates/
+    #suffix: .html
+  profiles:
+    active: local
+    #jwt.yml 불러오기
+    include: jwt
+  datasource:
+    password: akfldk1234
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    url: jdbc:mariadb://localhost:3307/parkit
+  jpa:
+    #update the schema with the given values
+    #hibernate:
+      #ddl-auto: update
+    properties:
+      hibernate:
+        #show-sql: 'true'
+        #to beautify or pretty print the SQL
+        format_sql: 'true'
+logging:
+  level:
+    org:
+      hibernate:
+        #show parameter binding
+        orm:
+          jdbc:
+            bind: TRACE
+        SQL: DEBUG
+        #show parameter binding
+        #type:
+          #descriptor:
+            #sql: TRACE
+#paths:
+  #/owner/login:
+    #post:
+      #summary: User login
+      #requestBody:
+        #required: true
+        #content:
+          #application/json:
+            #schema:
+              #type: object
+              #properties:
+                #id:
+                  #type: string
+                #pwd:
+                  #type: string
+

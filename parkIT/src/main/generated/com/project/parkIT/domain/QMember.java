@@ -31,6 +31,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final DatePath<java.sql.Date> reg = createDate("reg", java.sql.Date.class);
 
+    public final EnumPath<com.project.parkIT.domain.enums.Role> role = createEnum("role", com.project.parkIT.domain.enums.Role.class);
+
     public final StringPath tel = createString("tel");
 
     public QMember(String variable) {

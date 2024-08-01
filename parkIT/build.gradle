@@ -34,8 +34,18 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok:1.18.26'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok:1.18.26'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.projectlombok:lombok:1.18.26'
+	
+	//jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+	implementation 'commons-codec:commons-codec:1.17.0'
+	implementation 'com.auth0:java-jwt:4.4.0'
+	
 	
 	//Querydsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
