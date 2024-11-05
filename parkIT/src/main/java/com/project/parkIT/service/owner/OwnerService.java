@@ -8,20 +8,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.parkIT.domain.Owner;
 import com.project.parkIT.domain.dto.OwnerDTO;
+import com.project.parkIT.domain.dto.UserDTO;
 import com.project.parkIT.domain.enums.Role;
 import com.project.parkIT.repository.owner.OwnerRepository;
+import com.project.parkIT.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class OwnerService {
+public class OwnerService implements UserService<Owner> {
 	private final OwnerRepository ownerRepository;
 	private final PasswordEncoder encoder;
 	
 	//중복확인
-	private void validateDuplicateOwner(String id) {
+	public void validateDuplicateOwner(String id) {
 		ownerRepository.findById(id).
 			ifPresent(m -> {
 				throw new IllegalStateException("이미 존재하는 아이디입니다.");
@@ -29,7 +31,10 @@ public class OwnerService {
 	}
 	
 	//회원가입
-	public String join(OwnerDTO dto) {
+	@Override
+	public String join(UserDTO userDto) {
+		OwnerDTO dto = (OwnerDTO) userDto;
+		
 		validateDuplicateOwner(dto.getId());
 		dto.setPw(encoder.encode(dto.getPw()));
 		
@@ -64,19 +69,22 @@ public class OwnerService {
 //	}
 	
 	//아이디로 조회
-	public Owner findOne(String id) {
+	@Override
+	public Owner findUser(String id) {
 		return ownerRepository.findById(id)
 				.orElseThrow(() -> {
-					throw new IllegalStateException("일치하는 아이디가 없습니다.");
+					throw new IllegalStateException("점주를 찾을 수 없습니다.");
 				});
 	}
 	
 	//모든 점주 조회
+	@Override
 	public List<Owner> findAll() {
 		return ownerRepository.findAll();
 	}
 	
 	//아이디 찾기
+	@Override
 	public String findId(String tel, String name) {
 		Owner owner = ownerRepository.findByTelAndName(tel, name)
 				.orElseThrow(() -> {
@@ -87,6 +95,7 @@ public class OwnerService {
 	}
 	
 	//비밀번호 찾기
+	@Override
 	public String findPw(String id, String tel) {
 		Owner owner = ownerRepository.findByIdAndTel(id, tel)
 				.orElseThrow(() -> {
@@ -97,7 +106,10 @@ public class OwnerService {
 	}
 	
 	//점주 정보 수정
-	public Owner update(OwnerDTO dto) {
+	@Override
+	public Owner change(UserDTO userDto) {
+		OwnerDTO dto = (OwnerDTO) userDto;
+		
 		Owner owner = ownerRepository.findById(dto.getId())
 				.orElseThrow(() -> {
 					throw new IllegalStateException("점주를 찾을 수 없습니다.");
@@ -107,13 +119,14 @@ public class OwnerService {
 			dto.setPw(encoder.encode(dto.getPw()));
 		}
 		
-		owner.updateOwner(dto);
+		owner.update(dto);
 		
 		return owner;
 	}
 	
 	//점주 정보 삭제
-	public void delete(String id) {
+	@Override
+	public void remove(String id) {
 		ownerRepository.findById(id)
 				.orElseThrow(() -> {
 					throw new IllegalStateException("점주를 찾을 수 없습니다.");

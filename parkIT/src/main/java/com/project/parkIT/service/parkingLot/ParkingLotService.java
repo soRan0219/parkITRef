@@ -24,7 +24,7 @@ public class ParkingLotService {
 	
 	//주차장 등록
 	public String register(ParkingLotDTO dto) {
-		Owner owner = ownerService.findOne(dto.getOwnerId());
+		Owner owner = ownerService.findUser(dto.getOwnerId());
 		
 		parkingLotRepository.findByCode(dto.getCode())
 			.ifPresent(p -> {

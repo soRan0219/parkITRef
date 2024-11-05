@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.parkIT.repository.member.MemberRepository;
 import com.project.parkIT.repository.owner.OwnerRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -30,17 +31,20 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 public class SecurityConfig {
 	
-	private final OwnerDetailsService ownerDetailsService;
+	private final UserDetailsServiceImpl userDetailsService;
 	private final ObjectMapper objectMapper;
 	private final OwnerRepository ownerRepository;
+	private final MemberRepository memberRepository;
 	private final JwtService jwtService;
 	
 	private final String[] allowUrls = {
 				"/", 
 				"/api/**",
-				"/swagger-ui/**", "/v3/**", 
-				"owner/join", "member/join", "owner/login", "member/login"
-//				"/**/join", "/**/login"
+//				"/swagger-ui/**", "/v3/**", 
+				"/owner/join", "/member/join", "/owner/login", "/member/login",
+//				"**/join", "/**/login",
+//				"/join", "/login",
+				"/owner/find", "/member/find"
 			};
 	
 	//CORS 설정
@@ -51,9 +55,14 @@ public class SecurityConfig {
 			config.setAllowedMethods(Collections.singletonList("*"));
 			
 			//허용할 origin
-			config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000"));
+//			config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000"));
+			config.setAllowedOriginPatterns(Collections.singletonList("https://localhost:3000"));
 			
 			config.setAllowCredentials(true);
+			
+			config.addExposedHeader("Authorization");
+			config.addExposedHeader("Authorization-refresh");
+			
 			return config;
 		};
 	}
@@ -98,7 +107,7 @@ public class SecurityConfig {
 	public DaoAuthenticationProvider daoAuthenticationProvider() throws Exception {
 		DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
 		
-		daoAuthenticationProvider.setUserDetailsService(ownerDetailsService);
+		daoAuthenticationProvider.setUserDetailsService(userDetailsService);
 		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
 		
 		return daoAuthenticationProvider;
@@ -113,7 +122,8 @@ public class SecurityConfig {
 		return new ProviderManager(provider);
 	}
 	
-	//커스텀 필터(UsernamePasswordAuthenticationFilter) 등록
+	
+	//커스텀 필터 등록 /////////////////////////
 	@Bean
 	public UsernamePasswordAuthenticationFilter usernamePasswordLoginFilter() throws Exception {
 		UsernamePasswordAuthenticationFilter usernamePasswordLoginFilter = new UsernamePasswordAuthenticationFilter(objectMapper);
@@ -128,10 +138,19 @@ public class SecurityConfig {
 		return usernamePasswordLoginFilter;
 	}
 	
+	@Bean
+	public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
+		JwtAuthenticationProcessingFilter jsonUsernamePasswordLoginFilter = new JwtAuthenticationProcessingFilter(jwtService, ownerRepository, memberRepository);
+		
+		return jsonUsernamePasswordLoginFilter;
+	}
+	////////////////////////////////////////////////
+	
+	
 	//LoginSuccessJWTProviderHandler 등록
 	@Bean
 	public LoginSuccessJWTProviderHandler loginSuccessJWTProviderHandler() {
-		return new LoginSuccessJWTProviderHandler(jwtService, ownerRepository);
+		return new LoginSuccessJWTProviderHandler(jwtService);
 	}
 	
 	//LoginFailureHandler 등록
@@ -140,10 +159,4 @@ public class SecurityConfig {
 		return new LoginFailureHandler();
 	}
 	
-	@Bean
-	public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-		JwtAuthenticationProcessingFilter jsonUsernamePasswordLoginFilter = new JwtAuthenticationProcessingFilter(jwtService, ownerRepository);
-		
-		return jsonUsernamePasswordLoginFilter;
-	}
 }

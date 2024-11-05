@@ -1,3 +1,10 @@
+server: 
+  ssl: 
+    enabled: true 
+    key-store: dev.key 
+    key-store-password: 123456 
+    key-store-type: PKCS12 
+    key-alias: bns-ssl 
 springdoc:
   show-login-endpoint: 'true'
   default-produces-media-type: application/json
@@ -39,6 +46,9 @@ logging:
         #type:
           #descriptor:
             #sql: TRACE
+      #security logging
+      #springframework:
+        #security: TRACE
 #paths:
   #/owner/login:
     #post:

@@ -1,24 +1,11 @@
 package com.project.parkIT.repository.owner;
 
-import java.util.*;
-
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.project.parkIT.domain.Owner;
+import com.project.parkIT.repository.UserRepository;
 
 @Repository
-public interface OwnerRepository extends JpaRepository<Owner, String> {
-	Owner save(Owner owner);
+public interface OwnerRepository extends UserRepository<Owner> {
 	
-	Optional<Owner> findById(String id);
-	//아이디 찾기
-	Optional<Owner> findByTelAndName(String tel, String name);
-	//비밀번호 찾기
-	Optional<Owner> findByIdAndTel(String id, String tel);
-	List<Owner> findAll();
-	
-	Optional<Owner> findByRefreshToken(String refreshToken);
-	
-	void deleteById(String id);
 }

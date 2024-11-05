@@ -36,7 +36,7 @@ public class OwnerServiceTest {
 		String savedId = ownerService.join(dto);
 		
 		//then
-		Owner owner = ownerService.findOne(savedId);
+		Owner owner = ownerService.findUser(savedId);
 		assertThat(owner.getTel()).isEqualTo(dto.getTel());
 		log.debug("아이디: " + owner.getId() + "\n 이름: " + owner.getName() + "\n전화번호: " + owner.getTel());
 	}
@@ -50,7 +50,7 @@ public class OwnerServiceTest {
 		String pw = "2244";
 		
 		//when
-		Owner owner = ownerService.findOne(id);
+		Owner owner = ownerService.findUser(id);
 		String ownerId = owner.getId();
 		String ownerPw = owner.getPw();
 		
@@ -70,7 +70,7 @@ public class OwnerServiceTest {
 		String findId = ownerService.findId(tel, name);
 		
 		//then
-		Owner owner = ownerService.findOne(findId);
+		Owner owner = ownerService.findUser(findId);
 		log.debug("이름: " + owner.getName() + "\n전화번호: " + owner.getTel() + "\n아이디: " + owner.getId());
 	}
 	
@@ -98,7 +98,7 @@ public class OwnerServiceTest {
 		dto.setEmail("three@육.육");
 		
 		//when
-		Owner owner = ownerService.update(dto);
+		Owner owner = ownerService.change(dto);
 		
 		//then
 		log.debug("아이디: " + owner.getId());
@@ -114,11 +114,11 @@ public class OwnerServiceTest {
 		String id = "id3";
 		
 		//when
-		ownerService.delete(id);
+		ownerService.remove(id);
 		
 		//then
 		IllegalStateException e = assertThrows(IllegalStateException.class
-				, () -> ownerService.findOne(id)
+				, () -> ownerService.findUser(id)
 				, "예외가 발생하지 않았습니다.");
 		assertThat(e.getMessage()).isEqualTo("일치하는 아이디가 없습니다.");
 		log.debug("삭제 완료");
@@ -162,7 +162,7 @@ public class OwnerServiceTest {
 		
 		//when
 		IllegalStateException e = assertThrows(IllegalStateException.class
-				, () -> ownerService.findOne(id)
+				, () -> ownerService.findUser(id)
 				, "예외가 발생하지 않았습니다.");
 		
 		//then

@@ -1,37 +1,45 @@
 package com.project.parkIT.commons.security;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.project.parkIT.domain.Owner;
+import com.project.parkIT.domain.User;
 
-public class OwnerDetails implements UserDetails {
+public class UserDetailsImpl implements UserDetails {
 
-	private final Owner owner;
+	private final User user;
 	
-	public OwnerDetails(Owner owner) {
-		this.owner = owner;
+	public UserDetailsImpl(User user) {
+		this.user = user;
 	}
 	
-	public Owner getOwner() {
-		return owner;
+	public User getUser() {
+		return user;
 	}
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		if(user==null) {
+			return null;
+		} else {
+			Collection<GrantedAuthority> authorities = new ArrayList<>();
+			authorities.add(new SimpleGrantedAuthority(user.getRole()));
+			return authorities;
+		}
 	}
 
 	@Override
 	public String getPassword() {
-		return owner.getPw();
+		return user.getPw();
 	}
 
 	@Override
 	public String getUsername() {
-		return owner.getId();
+		return user.getId();
 	}
 
 	@Override

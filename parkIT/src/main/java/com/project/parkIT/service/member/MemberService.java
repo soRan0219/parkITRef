@@ -8,20 +8,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.parkIT.domain.Member;
 import com.project.parkIT.domain.dto.MemberDTO;
+import com.project.parkIT.domain.dto.OwnerDTO;
+import com.project.parkIT.domain.dto.UserDTO;
 import com.project.parkIT.domain.enums.Role;
 import com.project.parkIT.repository.member.MemberRepository;
+import com.project.parkIT.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class MemberService {
+public class MemberService implements UserService<Member> {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder encoder;
 	
 	//중복확인
-	private void validateDuplicateMember(String memberId) {
+	public void validateDuplicateMember(String memberId) {
 		memberRepository.findById(memberId)
 		.ifPresent(m -> {
 			throw new IllegalStateException("이미 존재하는 아이디입니다.");
@@ -29,18 +32,21 @@ public class MemberService {
 	}
 	
 	//회원가입
-	public String join(MemberDTO memberDto) {
-		validateDuplicateMember(memberDto.getId());
-		memberDto.setPw(encoder.encode(memberDto.getPw()));
+	@Override
+	public String join(UserDTO memberDto) {
+		MemberDTO dto = (MemberDTO) memberDto;
+		
+		validateDuplicateMember(dto.getId());
+		dto.setPw(encoder.encode(dto.getPw()));
 		
 		Member member = Member.builder()
-				.id(memberDto.getId())
-				.pw(memberDto.getPw())
-				.name(memberDto.getName())
-				.tel(memberDto.getTel())
-				.birth(memberDto.getBirth())
-				.email(memberDto.getEmail())
-				.reg(memberDto.getReg())
+				.id(dto.getId())
+				.pw(dto.getPw())
+				.name(dto.getName())
+				.tel(dto.getTel())
+				.birth(dto.getBirth())
+				.email(dto.getEmail())
+				.reg(dto.getReg())
 				.role(Role.MEMBER)
 				.build();
 		
@@ -59,18 +65,21 @@ public class MemberService {
 	}
 	
 	//아이디로 조회
-	public Member findOne(String memberId) {
+	@Override
+	public Member findUser(String memberId) {
 		return memberRepository.findById(memberId).orElseThrow(() -> {
-			throw new IllegalStateException("아이디와 비밀번호를 확인해주세요.");
+			throw new IllegalStateException("사용자를 찾을 수 없습니다.");
 		});
 	}
 	
 	//모든 회원 조회
+	@Override
 	public List<Member> findAll() {
 		return memberRepository.findAll();
 	}
 	
 	//아이디 찾기
+	@Override
 	public String findId(String tel, String name) {
 		Member member = memberRepository.findByTelAndName(tel, name)
 			.orElseThrow(() -> {
@@ -81,6 +90,7 @@ public class MemberService {
 	}
 	
 	//비밀번호 찾기
+	@Override
 	public String findPw(String id, String tel) {
 		Member member = memberRepository.findByIdAndTel(id, tel)
 				.orElseThrow(() -> {
@@ -91,23 +101,27 @@ public class MemberService {
 	}
 	
 	//회원정보 수정
-	public Member update(MemberDTO updateMember) {
-		Member member = memberRepository.findById(updateMember.getId())
+	@Override
+	public Member change(UserDTO updateMember) {
+		MemberDTO dto = (MemberDTO) updateMember;
+		
+		Member member = memberRepository.findById(dto.getId())
 				.orElseThrow(() -> {
 					throw new IllegalStateException("회원을 찾을 수 없습니다.");
 				});
 		
-		if(!encoder.matches(member.getPw(), updateMember.getPw())) {
-			updateMember.setPw(encoder.encode(updateMember.getPw()));
+		if(!encoder.matches(member.getPw(), dto.getPw())) {
+			dto.setPw(encoder.encode(dto.getPw()));
 		}
 		
-		member.changeMember(updateMember);
+		member.update(dto);
 		
 		return member;
 	}
 	
 	//회원 삭제
-	public void delete(String id) {
+	@Override
+	public void remove(String id) {
 		memberRepository.findById(id)
 				.orElseThrow(() -> {
 					throw new IllegalStateException("회원을 찾을 수 없습니다.");

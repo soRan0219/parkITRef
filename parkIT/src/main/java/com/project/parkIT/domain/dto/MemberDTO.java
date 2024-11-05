@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MemberDTO {
+public class MemberDTO implements UserDTO {
 	private String id;
 	private String pw;
 	private String pwConfirm;

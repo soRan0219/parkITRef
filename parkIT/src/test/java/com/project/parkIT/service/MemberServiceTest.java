@@ -36,7 +36,7 @@ public class MemberServiceTest {
 		String savedId = memberService.join(member);
 		
 		//then
-		Member findedMember = memberService.findOne(savedId);
+		Member findedMember = memberService.findUser(savedId);
 		
 		assertThat(member.getName()).isEqualTo(findedMember.getName());
 		log.debug("아이디: " + findedMember.getId());
@@ -77,7 +77,7 @@ public class MemberServiceTest {
 		String pw = "1111";
 		
 		//when
-		Member member = memberService.findOne(id);
+		Member member = memberService.findUser(id);
 		String memberId = member.getId();
 		String memberPw = member.getPw();
 		
@@ -127,7 +127,7 @@ public class MemberServiceTest {
 		member.setEmail(updateEmail);
 		
 		//then
-		Member mem = memberService.update(member);
+		Member mem = memberService.change(member);
 		log.debug("아이디: " + mem.getId());
 		log.debug("이름: " + mem.getName());
 		log.debug("이메일: " + mem.getEmail());
@@ -146,9 +146,9 @@ public class MemberServiceTest {
 		//when
 		
 		//then
-		memberService.delete(id);
+		memberService.remove(id);
 		
-		IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.findOne(id));
+		IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.findUser(id));
 		assertThat(e.getMessage()).isEqualTo("아이디와 비밀번호를 확인해주세요.");
 //		assertThat(e.getMessage()).isEqualTo("아이디와 비밀번호를 확인해주세요.1");
 		log.debug("회원 정보 삭제 완료");

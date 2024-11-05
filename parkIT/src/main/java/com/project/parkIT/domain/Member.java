@@ -3,6 +3,7 @@ package com.project.parkIT.domain;
 import java.sql.Date;
 
 import com.project.parkIT.domain.dto.MemberDTO;
+import com.project.parkIT.domain.dto.UserDTO;
 import com.project.parkIT.domain.enums.Role;
 
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Member {
+public class Member implements User {
 	
 	@Id
 	@Column(name="member_id", length=15, nullable=false)
@@ -40,6 +41,25 @@ public class Member {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 	
+	//refreshToken : redis 적용 전
+	@Column(name="refresh_token", length=500)
+	private String refreshToken;
+	
+	public String getRole() {
+		return role.getRoles();
+	}
+	
+	@Override
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
+	
+	@Override
+	public void destroyRefreshToken() {
+		this.refreshToken = null;
+	}
+	//refreshToken : redis 적용 전
+	
 	protected Member(String id, String pw, String name, String tel, Date reg, Role role) {
 		this.id = id;
 		this.pw = pw;
@@ -49,7 +69,10 @@ public class Member {
 		this.role = role;
 	}
 	
-	public void changeMember(MemberDTO dto) {
+	@Override
+	public void update(UserDTO userDto) {
+		MemberDTO dto = (MemberDTO) userDto;
+		
 		if(dto.getPw()!=null && !dto.getPw().trim().isBlank()) 
 			this.pw = dto.getPw();
 		if(dto.getName()!=null && !dto.getName().trim().isBlank()) 

@@ -46,21 +46,22 @@ public class UsernamePasswordAuthenticationFilter extends AbstractAuthentication
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException, IOException, ServletException {
 		
-//		log.debug(" @@@ @@@ *** *** UsernamePasswordAuthenticationFilter");
-		
 		if(request.getContentType()==null || !request.getContentType().equals(CONTENT_TYPE)) {
 			throw new AuthenticationServiceException("Authentication Content-Type not supported: " + request.getContentType());
 		}
 		
 		String messageBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
-		
 		Map<String, String> usernamePasswordMap = objectMapper.readValue(messageBody, Map.class);
 		
-		String username = usernamePasswordMap.get(USERNAME_KEY);
-		String password = usernamePasswordMap.get(PASSWORD_KEY);
 		
-//		log.debug(" @@@ @@@ *** *** username: " + username);
-//		log.debug(" @@@ @@@ *** *** password: " + password);
+		// uri 앞에 /api/ 붙기 전 - 나중에 수정할것
+		String uri = request.getRequestURI().substring(1, request.getRequestURI().lastIndexOf("/")+1);
+//		log.debug(" attemptAuthentication() - uri: " + uri);
+		
+		
+		String username = uri + usernamePasswordMap.get(USERNAME_KEY);
+		String password = usernamePasswordMap.get(PASSWORD_KEY);
+//		log.debug(" attemptAuthentication() - username: " + username);
 		
 		//principal과 credentials 전달
 		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);

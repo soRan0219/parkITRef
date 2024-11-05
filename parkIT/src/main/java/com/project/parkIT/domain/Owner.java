@@ -3,6 +3,7 @@ package com.project.parkIT.domain;
 import java.util.*;
 
 import com.project.parkIT.domain.dto.OwnerDTO;
+import com.project.parkIT.domain.dto.UserDTO;
 import com.project.parkIT.domain.enums.Role;
 
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Owner {
+public class Owner implements User {
 	
 	@Id
 	@Column(name="owner_id", length=15, nullable=false)
@@ -38,10 +39,16 @@ public class Owner {
 	@Column(name="refresh_token", length=500)
 	private String refreshToken;
 	
+	public String getRole() {
+		return role.getRoles();
+	}
+	
+	@Override
 	public void updateRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}
 	
+	@Override
 	public void destroyRefreshToken() {
 		this.refreshToken = null;
 	}
@@ -59,7 +66,10 @@ public class Owner {
 	@OneToMany(mappedBy="owner", cascade=CascadeType.ALL)
 	private List<ParkingLot> pList = new ArrayList<>();
 	
-	public void updateOwner(OwnerDTO dto) {
+	@Override
+	public void update(UserDTO userDto) {
+		OwnerDTO dto = (OwnerDTO) userDto;
+		
 		if(dto.getPw()!=null && !dto.getPw().trim().isBlank()) 
 			this.pw = dto.getPw();
 		if(dto.getName()!=null && !dto.getName().trim().isBlank()) 
@@ -69,4 +79,5 @@ public class Owner {
 		if(dto.getEmail()!=null && !dto.getEmail().trim().isBlank()) 
 			this.email = dto.getEmail();
 	}
+
 }

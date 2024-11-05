@@ -4,7 +4,7 @@ import lombok.*;
 
 @Getter
 @Setter
-public class OwnerDTO {
+public class OwnerDTO implements UserDTO {
 	private String id;
 	private String pw;
 	private String pwConfirm;
